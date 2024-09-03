@@ -107,3 +107,9 @@
 .transactions:hover {
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
 }
+.delete-transaction {
+  color: red;
+  cursor: pointer;
+  margin-left: 10px;
+}
+

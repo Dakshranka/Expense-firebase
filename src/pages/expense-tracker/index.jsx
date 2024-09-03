@@ -7,11 +7,13 @@ import { useNavigate } from "react-router-dom";
 
 import "./styles.css";
 import { auth } from "../../config/firebase-config";
+import { useDeleteTransaction } from "../../hooks/deleteTransaction";
 
 export const ExpenseTracker = () => {
   const { addTransaction } = useAddTransaction();
   const { transactions, transactionTotals } = useGetTransactions();
   const { name, profilePhoto } = useGetUserInfo();
+  const { deleteTransaction } = useDeleteTransaction();
   const navigate = useNavigate();
 
   const [description, setDescription] = useState("");
@@ -40,6 +42,10 @@ export const ExpenseTracker = () => {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handleDelete = (transactionID) => {
+    deleteTransaction(transactionID);
   };
 
   return (
@@ -98,8 +104,7 @@ export const ExpenseTracker = () => {
         </div>
         {profilePhoto && (
           <div className="profile">
-            {" "}
-            <img className="profile-photo" src={profilePhoto}  alt="Profile"/>
+            <img className="profile-photo" src={profilePhoto} alt="Profile" />
             <button className="sign-out-button" onClick={signUserOut}>
               Sign Out
             </button>
@@ -110,11 +115,19 @@ export const ExpenseTracker = () => {
         <h3> Transactions</h3>
         <ul>
           {transactions.map((transaction) => {
-            const { description, transactionAmount, transactionType } =
+            const { id, description, transactionAmount, transactionType } =
               transaction;
             return (
-              <li>
-                <h4> {description} </h4>
+              <li key={id}>
+                <h4>
+                  {description}
+                  <span
+                    className="delete-transaction"
+                    onClick={() => handleDelete(id)}
+                  >
+                    ❌
+                  </span>
+                </h4>
                 <p>
                   ₹{transactionAmount} •{" "}
                   <label
@@ -122,8 +135,7 @@ export const ExpenseTracker = () => {
                       color: transactionType === "expense" ? "red" : "green",
                     }}
                   >
-                    {" "}
-                    {transactionType}{" "}
+                    {transactionType}
                   </label>
                 </p>
               </li>
